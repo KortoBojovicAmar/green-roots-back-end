@@ -1,0 +1,135 @@
+<%- include('partials/head') %>
+    <%- include('partials/header') %>
+        <main class="container">
+            <h1>Back-office administrateur</h1>
+            <br>
+            <h2>Créer un nouvel arbre</h2>
+
+            <form class="create-form" action="/tree/" method="POST">
+                <label for="name">Nom :</label>
+                <input type="text" id="name" name="name" required>
+
+                <label for="kind">Type d'arbre :</label>
+                <input type="text" id="kind" name="kind" required>
+
+                <label for="description">Description :</label>
+                <input type="text" id="description" name="description" required>
+
+                <label for="price">Prix :</label>
+                <input type="number" id="price" name="price" required>
+
+                <label for="quantity">Quantité disponible :
+                <input type="number" id="quantity" name="quantity" required></label>
+
+                <label for="id_campaign">ID de la campagne liée à cet arbre :</label>
+                <input type="number" id="id_campaign" name="id_campaign" required>
+
+                <br> <br>
+                <input type="submit" value="Créer un arbre">
+            </form><br><br>
+
+
+
+            <!--* Liste de tous les arbres -->
+
+            <h2>Gestion des arbres existants</h2>
+            <table>
+                <thead>
+
+                    <tr>
+                        <th>Nom</th>
+                        <th>Type d'arbre</th>
+                        <th>Prix</th>
+                        <th>Quantité disponible</th>
+                        <th>Mise à jour</th>
+                        <th>Supprimer</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% for (const tree of trees) { %>
+                        <tr>
+                            <td><%= tree.name %></td>
+                            <td><%= tree.kind %></td>
+                            <td><%= tree.price %></td>
+                            <td><%= tree.quantity %></td>
+                            <td>
+                                <div>
+                                    <button id="button<%= tree.id %>" onclick="showUpdateForm('<%= tree.id %>')" style="position: relative;">Modifier</button>
+                                    <form id="updateForm<%= tree.id %>" class="modif-form" action="/tree/<%= tree.id %>" method="POST">
+                                        <table>
+                                            <tr><th>Id</th><td><input type="number" name="id" value="<%= tree.id %>"></td></tr>
+                                            <tr><th>Nom</th><td><input type="text" name="name" value="<%= tree.name %>"></td></tr>
+                                            <tr><th>Type</th><td><input type="text" name="kind" value="<%= tree.kind %>"></td></tr>
+                                            <tr><th>Description</th><td><input type="text" name="description" value="<%= tree.description %>"></td></tr>
+                                            <tr><th>Prix</th><td><input type="number" name="price" value="<%= tree.price %>"></td></tr>
+                                            <tr><th>Quantité</th><td><input type="number" name="quantity" value="<%= tree.quantity %>"></td></tr>
+                                            <tr><th>Mis à jour le</th><td><input type="text" name="updatedAt" value="<%= tree.updatedAt %>"></td></tr>
+                                        </table>
+                                        <input type="submit" value="Modifier">
+                                    </form>
+                                </div>
+                            </td>
+                            <td>
+                                <form action="/tree/trash/<%= tree.id %>" method="POST">
+                                    <button type="submit">Supprimer</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <% } %>
+                </tbody>
+            </table><br><br>
+
+            <!--* Liste des arbres supprimés en soft delete -->
+
+            <h2>Arbres supprimés</h2>
+            <table>
+                <thead>
+
+                    <tr>
+                        <th>Nom</th>
+                        <th>Type d'arbre</th>
+                        <th>Prix</th>
+                        <th>Quantité disponible</th>
+                        <th>Mise à jour</th>
+                        <th>Supprimer</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% for (const tree of deletedTrees) { %>
+                        <tr>
+                            <td><%= tree.name %></td>
+                            <td><%= tree.kind %></td>
+                            <td><%= tree.price %></td>
+                            <td><%= tree.quantity %></td>
+                            <td><form action="/tree/untrash/<%= tree.id %>" method="POST">
+                                    <button type="submit">Restaurer</button></form></td>
+                            <td><form action="/tree/delete/<%= tree.id %>" method="POST">
+                                    <button type="submit">Supprimer définitivement</button></form></td>
+                        </tr>
+                        <% } %>
+                </tbody>
+            </table>
+
+            <!--* script pour afficher ou masquer le form de modification d'un arbre -->
+
+            <script>
+                function showUpdateForm(treeId) {
+                let form = document.getElementById('updateForm' + treeId);
+                let button = document.getElementById('button' + treeId);
+
+
+                if (form.style.display === 'none') {
+                     form.style.display = 'block';
+                        button.textContent = 'Fermer';
+                } else {
+                 form.style.display = 'none';
+                    button.textContent = 'Modifier';
+                }
+                }
+
+            </script>
+
+        </main>
+        </body>
+
+        </html>

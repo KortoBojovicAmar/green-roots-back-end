@@ -1,0 +1,5 @@
+# On ajoute ici les dossiers et fichiers à ignorer lors du push sur github.
+# Lorsque c'est un dossier on termine par un "/"
+
+node_modules/
+.env

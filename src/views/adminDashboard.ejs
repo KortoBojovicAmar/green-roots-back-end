@@ -1,0 +1,137 @@
+<%- include('partials/head') %>
+    <%- include('partials/header') %>
+        <main class="container">
+            <h1>Back-office administrateur</h1>
+            <br>
+            <h2>Créer un nouvel utilisateur</h2>
+
+            <form class="create-form" action="/admin/adduser" method="POST">
+                <label for="lastname">Nom :</label>
+                <input type="text" id="lastname" name="lastname" required>
+
+                <label for="firstname">Prénom :</label>
+                <input type="text" id="firstname" name="firstname" required>
+
+                <label for="email">Email :</label>
+                <input type="email" id="email" name="email" required>
+
+                <label for="password">Mot de passe :</label>
+                <input type="password" id="password" name="password" required>
+                <br> <br>
+                <label for="role">Rôle :</label>
+                <select id="role" name="role" required>
+                    <option value="">Sélectionnez un rôle</option>
+                    <option value="admin">Admin</option>
+                    <option value="manager">Manager</option>
+                    <option value="partner">Partner</option>
+                    <option value="user">User</option>
+                </select>
+                <br> <br>
+                <input type="submit" value="Créer un utilisateur">
+            </form><br><br>
+
+            <!--* Liste de tous les utilisateurs -->
+
+            <h2>Gestion des utilisateurs existants</h2>
+            <table>
+                <thead>
+
+                    <tr>
+                        <th>Nom</th>
+                        <th>Prénom</th>
+                        <th>Email</th>
+                        <th>Rôle</th>
+                        <th>Mise à jour</th>
+                        <th>Supprimer</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% for (const user of users) { %>
+                        <tr>
+                            <td><%= user.firstname %></td>
+                            <td><%= user.lastname %></td>
+                            <td><%= user.email %></td>
+                            <td><%= user.role %></td>
+                            <td>
+                                <div>
+                                    <button id="button<%= user.id %>" onclick="showUpdateForm('<%= user.id %>')" style="position: relative;">Modifier</button>
+                                    <form id="updateForm<%= user.id %>" class="modif-form" action="/users/modif/<%= user.id %>" method="POST">
+                                        <table>
+                                            <tr><th>Id</th><td><input type="text" name="id" value="<%= user.id %>"></td></tr>
+                                            <tr><th>Prénom</th><td><input type="text" name="firstname" value="<%= user.firstname %>"></td></tr>
+                                            <tr><th>Nom</th><td><input type="text" name="lastname" value="<%= user.lastname %>"></td></tr>
+                                            <tr><th>Mot de passe</th><td><input type="text" name="password" value="<%= user.password %>"></td></tr>
+                                            <tr><th>Email</th><td><input type="email" name="email" value="<%= user.email %>"></td></tr>
+                                            <tr><th>Numéro de téléphone</th><td><input type="text" name="phone_number" value="<%= user.phone_number %>"></td></tr>
+                                            <tr><th>Adresse</th><td><input type="text" name="address" value="<%= user.address %>"></td></tr>
+                                            <tr><th>Code postal</th><td><input type="text" name="zip_code" value="<%= user.zip_code %>"></td></tr>
+                                            <tr><th>Ville</th><td><input type="text" name="city" value="<%= user.city %>"></td></tr>
+                                            <tr><th>Rôle</th><td><input type="text" name="role" value="<%= user.role %>"></td></tr>
+                                            <tr><th>Créé le</th><td><input type="text" name="createdAt" value="<%= user.createdAt %>"></td></tr>
+                                            <tr><th>Mis à jour le</th><td><input type="text" name="updatedAt" value="<%= user.updatedAt %>"></td></tr>
+                                        </table>
+                                        <input type="submit" value="Modifier">
+                                    </form>
+                                </div>
+                            </td>
+                            <td>
+                                <form action="/users/trash/<%= user.id %>" method="POST">
+                                    <button type="submit">Supprimer</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <% } %>
+                </tbody>
+            </table><br><br>
+
+            <!--* Liste des utilisateurs supprimés en soft delete -->
+
+            <h2>Utilisateurs supprimés</h2>
+            <table>
+                <thead>
+
+                    <tr>
+                        <th>Nom</th>
+                        <th>Prénom</th>
+                        <th>Email</th>
+                        <th>Rôle</th>
+                        <th>Mise à jour</th>
+                        <th>Supprimer</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% for (const user of deletedUsers) { %>
+                        <tr>
+                            <td><%= user.firstname %></td>
+                            <td><%= user.lastname %></td>
+                            <td><%= user.email %></td>
+                            <td><%= user.role %></td>
+                            <td><form action="/users/untrash/<%= user.id %>" method="POST">
+                                    <button type="submit">Restaurer</button></form></td>
+                            <td><form action="/users/<%= user.id %>" method="POST">
+                                    <button type="submit">Supprimer définitivement</button></form></td>
+                        </tr>
+                        <% } %>
+                </tbody>
+            </table>
+
+            <!--* script pour afficher ou masquer le form de modification d'un utilisateur -->
+
+            <script>
+                function showUpdateForm(userId) {
+                let form = document.getElementById('updateForm' + userId);
+                let button = document.getElementById('button' + userId);
+
+                if (form.style.display === 'none') {
+                    form.style.display = 'block';
+                    button.textContent = 'Fermer';
+                } else {
+                    form.style.display = 'none';
+                    button.textContent = 'Modifier';
+                }
+            }
+            </script>
+        </main>
+        </body>
+
+        </html>

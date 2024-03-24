@@ -1,0 +1,30 @@
+<%- include('partials/head') %>
+
+    <main class="container">
+
+        <div class="container box">
+            <h1>Connexion</h1>
+            <br>
+            <br>
+            <form action="/admin/login" method="POST">
+
+                <label>Email <span title="Champ obligatoire">*</span>
+                    <input type="email" name="email" required value="admin@admin.com">
+                </label>
+
+                <label>Mot de passe <span title="Champ obligatoire">*</span>
+                    <input type="password" name="password" required>
+                </label>
+                <% if (typeof error !=='undefined' ) { %>
+                    <div style="color: red;">
+                        <%= error %>
+                    </div>
+                    <% } %>
+                        <button type="submit">Se connecter</button>
+            </form>
+        </div>
+    </main>
+
+    </body>
+
+    </html>

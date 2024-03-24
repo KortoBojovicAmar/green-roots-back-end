@@ -83,4 +83,3 @@ Sert à stocker le password des utilisateurs en version hashée (cryptée),
 pour éviter que lors d'un piratage, les mots de passe des utilisateurs soient récupérés.
 
 C'est une obligation légale de sécuriser le stockage des données sensibles.
-# green-roots-back-end

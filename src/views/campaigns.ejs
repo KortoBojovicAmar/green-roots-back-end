@@ -1,0 +1,145 @@
+<%- include('partials/head') %>
+    <%- include('partials/header') %>
+        <main class="container">
+            <h1>Back-office administrateur</h1>
+            <br>
+            <h2>Créer une nouvelle campagne</h2>
+            
+            <form class="create-form" action="/campaign/" method="POST">
+                <label for="name">Nom :</label>
+                <input type="text" id="name" name="name" required>
+
+                <label for="description">Description :</label>
+                <input type="text" id="description" name="description" required>
+
+                <label for="starting_date">Date de début :</label>
+                <input type="date" id="starting_date" name="starting_date" required>
+
+                <label for="ending_date">Date de fin :</label>
+                <input type="date" id="ending_date" name="ending_date" required>
+
+                <label for="place">Emplacement :</label>
+                <input type="text" id="place" name="place" required>
+
+                <label for="id_user">ID du chef de projet à lier à la campagne :</label>
+                <input type="number" id="id_user" name="id_user" required>
+
+                <label for="image_urls">URLs des images :</label>
+                <textarea id="image_urls" name="image_urls" placeholder="Séparer les URL par une virgule" required></textarea>
+
+                <br> <br>
+                <input type="submit" value="Créer une campagne">
+            </form><br><br>
+
+
+ <!--* Liste de toutes les campagnes -->
+
+ <h2>Gestion des campagnes existants</h2>
+ <table>
+     <thead>
+
+         <tr>
+             <th>Nom</th>
+             <th>Description</th>
+             <th>Date de début</th>
+             <th>Date de fin</th>
+             <th>Emplacement</th>
+             <th>Supprimer</th>
+         </tr>
+     </thead>
+     <tbody>
+         <% for (const campaign of campaigns) { %>
+             <tr>
+                 <td><%= campaign.name %></td>
+                 <td><%= campaign.description.length > 50 ? campaign.description.substring(0, 40) + '...' : campaign.description %></td>
+                 <td><%= new Date(campaign.starting_date).toLocaleDateString('fr-FR') %></td>
+                 <td><%= new Date(campaign.ending_date).toLocaleDateString('fr-FR') %></td> 
+                 <td><%= campaign.place %></td>
+                 <td>
+                     <div>
+                         <button id="button<%= campaign.id %>" onclick="showUpdateForm('<%= campaign.id %>')" style="position: relative;">Modifier</button>
+                         <form id="updateForm<%= campaign.id %>" class="modif-form" action="/campaign/<%= campaign.id %>" method="POST">
+                             <table>
+                                 <tr><th>Id</th><td><input type="number" name="id" value="<%= campaign.id %>"></td></tr>
+                                 <tr><th>Nom</th><td><input type="text" name="name" value="<%= campaign.name %>"></td></tr>
+                                 <tr><th>Description</th><td><input type="text" name="description" value="<%= campaign.description %>"></td></tr>
+                                 <tr><th>Date de début</th><td><input type="text" name="starting_date" value="<%= campaign.starting_date %>"></td></tr>
+                                 <tr><th>Date de fin</th><td><input type="text" name="ending_date" value="<%= campaign.ending_date %>"></td></tr>
+                                 <tr><th>Emplacement</th><td><input type="text" name="place" value="<%= campaign.place %>"></td></tr>
+                                 <tr><th>Mis à jour le</th><td><input type="text" name="updatedAt" value="<%= campaign.updatedAt %>"></td></tr>
+                                 <tr>
+                                    <th>Images url</th>
+                                    <td>
+                                      <% campaign.CampaignPictures.forEach(picture => { %>
+                                        <input type="text" name="image_urls" value="<%= picture.image_url %>">
+                                      <% }) %>
+                                    </td>
+                                  </tr>
+                             </table>
+                             <input type="submit" value="Modifier">
+                         </form>
+                     </div>
+                 </td>
+                 <td>
+                     <form action="/campaign/trash/<%= campaign.id %>" method="POST">
+                         <button type="submit">Supprimer</button>
+                     </form>
+                 </td>
+             </tr>
+             <% } %>
+     </tbody>
+ </table><br><br>
+
+ <!--* Liste des arbres supprimés en soft delete -->
+
+ <h2>Arbres supprimés</h2>
+ <table>
+     <thead>
+
+         <tr>
+             <th>Nom</th>
+             <th>Type d'arbre</th>
+             <th>Prix</th>
+             <th>Quantité disponible</th>
+             <th>Mise à jour</th>
+             <th>Supprimer</th>
+         </tr>
+     </thead>
+     <tbody>
+         <% for (const campaign of deletedCampaigns) { %>
+             <tr>
+                <td><%= campaign.name %></td>
+                <td><%= campaign.description.length > 50 ? campaign.description.substring(0, 40) + '...' : campaign.description %></td>
+                <td><%= new Date(campaign.starting_date).toLocaleDateString('fr-FR') %></td> 
+                <td><%= new Date(campaign.ending_date).toLocaleDateString('fr-FR') %></td> 
+                <td><%= campaign.place %></td>
+                 <td><form action="/campaign/untrash/<%= campaign.id %>" method="POST">
+                         <button type="submit">Restaurer</button></form></td>
+                 <td><form action="/campaign/delete/<%= campaign.id %>" method="POST">
+                         <button type="submit">Supprimer définitivement</button></form></td>
+             </tr>
+             <% } %>
+     </tbody>
+ </table>
+
+ <!--* script pour afficher ou masquer le form de modification d'un arbre -->
+
+ <script>
+function showUpdateForm(campaignId) {
+  let form = document.getElementById('updateForm' + campaignId);
+  let button = document.getElementById('button' + campaignId);
+
+  if (form.style.display === 'none') {
+    form.style.display = 'block';
+    button.textContent = 'Fermer';
+  } else {
+    form.style.display = 'none';
+    button.textContent = 'Modifier';
+  }
+}
+ </script>
+
+        </main>
+        </body>
+
+        </html>
